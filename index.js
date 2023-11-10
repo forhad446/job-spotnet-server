@@ -43,7 +43,18 @@ async function run() {
             const result = await UsersCollection.find(query).toArray();
             res.send(result);
         })
-         
+        // data get by id
+        app.get('/jobs/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id),
+            }
+            const result = await UsersCollection.find(query).toArray();
+            res.send(result)
+        })
+
+
+
         // delete single user
         app.delete("/jobs/:id", async (req, res) => {
             const id = req.params.id;
@@ -51,6 +62,33 @@ async function run() {
                 _id: new ObjectId(id),
             };
             const result = await UsersCollection.deleteOne(query)
+            res.send(result);
+        });
+        // update data
+        app.put("/jobs/:id", async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+
+            const filter = {
+                _id: new ObjectId(id),
+            };
+            const options = { upsert: true };
+            const updatedData = {
+                $set: {
+                    job_title: data.job_title,
+                    email: data.email,
+                    job_type: data.job_type,
+                    deadline: data.deadline,
+                    minimum_price: data.maximum_price,
+                    maximum_price: data.maximum_price,
+                    description: data.description
+                },
+            };
+            const result = await UsersCollection.updateOne(
+                filter,
+                updatedData,
+                options
+            );
             res.send(result);
         });
 
